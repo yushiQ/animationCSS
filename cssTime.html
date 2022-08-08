@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./cssTime.css">
+</head>
+
+<body>
+    <div class="time" id="time">
+        <span class="hour"></span>
+        <a class="split">:</a>
+        <span class="minitus"></span>
+        <a class="split">:</a>
+        <span class="seconds"></span>
+    </div>
+</body>
+<script>
+    const d = new Date()
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+    time.style.setProperty('--ds', s)
+    time.style.setProperty('--dm', m + s / 60)
+    time.style.setProperty('--dh', h + m / 60 + s / 3600)
+</script>
+
+</html>

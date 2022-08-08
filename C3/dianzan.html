@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta content="width=device-width,maximum-scale=1.0,minimum-scale=1.0,initial-scale=1.0,user-scalable=no"
+        name="viewport">
+
+    <!-- <script src="../public/jquery-3.2.1.js"></script> -->
+    <!-- <link rel="stylesheet" href="../public/reset.css"> -->
+    <style>
+        .vs-wrapper {
+            margin-top: 200px;
+            padding-top: 4px;
+            background: #f4f4f5
+        }
+
+        .team-vs-bar {
+            display: -webkit-box;
+            width: 100%;
+            height: 40px;
+            padding: 0 20px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 1
+        }
+
+        .team-vs-bar .bar-a,
+        .team-vs-bar .bar-b {
+            position: relative;
+            height: 40px;
+            width: 50%;
+            -webkit-box-flex: 1;
+            font-size: 12px;
+            color: #fff;
+            line-height: 40px;
+            min-width: 90px;
+            -webkit-transition: width .5s ease-in
+        }
+
+        .team-vs-bar .bar-b {
+            background: #306dca
+        }
+
+        .team-vs-bar .bar-a {
+            background: #c93c5d
+        }
+
+        .team-vs-bar .btn-a,
+        .team-vs-bar .btn-b {
+            position: absolute;
+            top: 0;
+            z-index: 1;
+            height: 100%;
+            width: 100%
+        }
+
+        .team-vs-bar .btn-a {
+            left: 0
+        }
+
+        .team-vs-bar .btn-b {
+            right: 0
+        }
+
+        .team-vs-bar .btn-a .item,
+        .team-vs-bar .btn-b .item {
+            position: absolute;
+            top: 12px;
+            height: 14px;
+            width: 14px;
+            overflow: hidden;
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAYAAAC9pNwMAAAAAXNSR0IArs4c6QAAAb5JREFUSA3FlslKw1AYhRtHFBzAhQiCICi4VnDjhOALCC7EZ+gTiDsfQBBfwI24cVEUNwVFoUvFjQpaFQUriANKnait399amiY3aZpm+OEjN+fee87NzUAiEZeVy+U6YBXScA9RqHNp53waIWuQhWK90ph07uBiJAEtkCom6o6ymDYnlm63phtz1dwp9B4/gwcwb1QEDKK1K3STpFq1aZBCGEVrVegNaE0K3SS5DZ7BqdnkVhCyFnqZXHUwD88cDkNlLqWTR5ofpVOPWoT2QQKsKk5Hr0dxBRsMuyBmlfivL3G0ugXVrQcjeWfHYR3s6onOYafumgxkwjSHWdC/n4ucX8EOjEAn2NUznQn4Artn543+FQldgBsw1gSCXK0fta3hmmQF/WCsMYQjeId6Y2eN55+yJarQGn0rTk/a3YuKs2sYsBVGsHzZYmEEnxF8HkbwBsHfYQTHNU3LBB18zNXegu0XRvq9rl0MX8Q0yCvOkLfPNssnNdDgE/KuJVQqyCveIy+VTw0w+JesA7Y5rQ+Wvfe77gi41IfIVm/qBZ/ap/he6L3ldzQKDzAP8jOe/zng6EX9YHIIy/LR0Bv+ATSEcRN3tjd8AAAAAElFTkSuQmCC) no-repeat;
+            -webkit-background-size: contain;
+            background-size: contain
+        }
+
+        .team-vs-bar .btn-a .item {
+            left: 17px
+        }
+
+        .team-vs-bar .btn-b .item {
+            right: 17px;
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg)
+        }
+
+        .team-vs-bar .bar-a .num-wrap {
+            display: block;
+            text-align: left;
+            padding-left: 40px
+        }
+
+        .team-vs-bar .bar-b .num-wrap {
+            display: block;
+            text-align: right;
+            padding-right: 40px
+        }
+
+        .team-vs-bar .bar-a .num-inline,
+        .team-vs-bar .bar-b .num-inline {
+            display: inline-block;
+            position: relative
+        }
+
+        .team-vs-bar .bar-a .num-inline span,
+        .team-vs-bar .bar-b .num-inline span {
+            font-family: icomoon
+        }
+
+        .team-vs-bar .bar-a:after,
+        .team-vs-bar .bar-b:after {
+            content: ".";
+            text-indent: -9999px;
+            font-size: 0;
+            position: absolute;
+            display: block;
+            height: 0;
+            width: 0;
+            border-style: solid;
+            border-width: 20px;
+            border-color: transparent;
+            -webkit-transform: rotate(-15deg)
+        }
+
+        .team-vs-bar .bar-a:after {
+            border-top-color: #c93c5d;
+            right: -20px;
+            top: 0;
+            z-index: 1
+        }
+
+        .team-vs-bar .bar-b:after {
+            border-bottom-color: #306dca;
+            left: -20px;
+            bottom: 0
+        }
+
+        .team-vs-bar span {
+            display: inline-block;
+            max-width: 90px;
+            letter-spacing: 1px;
+            word-break: break-all
+        }
+
+        .team-vs-bar i {
+            position: absolute;
+            z-index: 2;
+            display: none;
+            width: 20px;
+            opacity: 0;
+            top: 0;
+            -webkit-animation: bar_plus 1s ease;
+            vertical-align: top
+        }
+
+        .team-vs-bar .bar-a i {
+            right: -25px
+        }
+
+        .team-vs-bar .bar-b i {
+            left: -25px
+        }
+
+        .team-vs-bar .increase i {
+            display: block;
+
+        }
+
+        .team-vs-bar .item {
+            width: 21px;
+            height: 21px;
+            line-height: 15px;
+            display: inline-block;
+            position: relative;
+            top: 3px
+        }
+
+        .team-vs-bar .icon {
+            width: 13px;
+            height: 13px;
+            fill: #fff
+        }
+
+        @-webkit-keyframes bar_plus {
+            0% {
+                opacity: 0;
+                -webkit-transform: scale(0)
+            }
+
+            50% {
+                opacity: 1
+            }
+
+            60% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(1.4)
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="vs-wrapper">
+        <div class="vs-bar team-vs-bar">
+            <div class="bar-a">
+                <a class="btn btn-a">
+                    <div class="item"></div>
+                </a>
+                <div class="num-wrap">
+                    <div class="num-inline"><span>5</span><i>+1</i></div>
+                </div>
+            </div>
+            <div class="bar-b">
+                <a class="btn btn-b">
+                    <div class="item"></div>
+                </a>
+                <div class="num-wrap">
+                    <div class="num-inline"><i>+1</i><span>16</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function setWidth() {
+        var leftVote = 20, rightVote = 20 || 0;
+        allVote = parseInt(leftVote) + parseInt(rightVote);
+        let leftBarNode = [].slice.call(leftBar.childNodes);
+        let rightBarNode = [].slice.call(rightBar.childNodes);
+        console.log(leftBarNode)
+        leftBarNode.find(item => item.className === 'num-wrap').innerText = leftVote;
+        rightBarNode.find(item => item.className === 'num-wrap').innerText = rightVote
+        leftBar.style.width = (leftVote / allVote * 100 + "%");
+        rightBar.style.width = (100 - rightVote / allVote * 100 + "%");
+
+        return;
+        // leftBar.find("span").text(leftVote);
+        // rightBar.find("span").text(rightVote);
+        // leftBar.width(leftVote / allVote * 100 + "%");
+        // rightBar.width(100 - rightVote / allVote * 100 + "%");
+    }
+
+    // function voteClick(one) {
+    //     var other = one.siblings();
+    //     var oneDom = one.find("span"), oneValue = parseInt(oneDom.text());
+    //     oneValue++;
+    //     allVote++;
+    //     one.siblings().attr("style", "");
+    //     oneDom.text(oneValue);
+    //     one.removeClass("increase");
+    //     one.width(oneValue / allVote * 100 + "%");
+    //     other.width(100 - oneValue / allVote * 100 + "%");
+    //     clearTimeout(showOnePlus);
+    //     showOnePlus = setTimeout(function () {
+    //         one.addClass("increase");
+    //         clearTimeout(showOnePlus)
+    //     }, 0)
+    // }
+    // function getSpan(child) {
+    //     const node = '';
+    //     child.childNodes ? child.childNodes.forEach(item => {
+
+    //    });
+    //   return node
+    // }
+    function voteClick(one, other) {
+        const oneNodes = [].slice.call(one.childNodes);
+        const oneDom = oneNodes.find(item => item.className == 'num-wrap');
+        let oneValue = parseInt(oneDom.innerText);
+        oneValue++;
+        allVote++;
+        oneDom.innerText = oneValue;
+        one.classList.remove("increase")
+        // 设置主宽度
+        one.style.width = (oneValue / allVote * 100 + "%");
+   
+        other.style.width = (100 - oneValue / allVote * 100 + "%");
+
+        clearTimeout(showOnePlus);
+        showOnePlus = setTimeout(function () {
+            one.classList.add("increase")
+            clearTimeout(showOnePlus)
+        }, 0)
+        console.log(oneDom)
+        return
+        // var other = one.siblings();
+        // var oneDom = one.find("span"), oneValue = parseInt(oneDom.text());
+        // oneValue++;
+        // allVote++;
+        // one.siblings().attr("style", "");
+        // oneDom.text(oneValue);
+        // one.removeClass("increase");
+        // one.width(oneValue / allVote * 100 + "%");
+        // other.width(100 - oneValue / allVote * 100 + "%");
+        // clearTimeout(showOnePlus);
+        // showOnePlus = setTimeout(function () {
+        //     one.addClass("increase");
+        //     clearTimeout(showOnePlus)
+        // }, 0)
+    }
+
+    function init(bar) {
+
+        const barNodes = [].slice.call(bar.childNodes);
+        console.log(barNodes)
+        if (barNodes.length) {
+            leftBar = barNodes.find((item) => item.className == 'bar-a');
+            rightBar = barNodes.find((item) => item.className == 'bar-b');
+            setWidth();
+            leftBar.addEventListener("click", function () {
+                voteClick(this, rightBar)
+                // voteClick($(this))
+            })
+            rightBar.addEventListener("click", function () {
+                voteClick(this, leftBar)
+                // voteClick($(this))
+            })
+        }
+    }
+
+    var leftBar, rightBar, allVote, showOnePlus;
+    let dom = document.querySelector('.team-vs-bar')
+    init(dom)
+</script>
+
+</html>

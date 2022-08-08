@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #333;
+        }
+        div {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div onclick="canvasAutograph(event)">签名</div>
+</body>
+<script>
+    function canvasAutograph(option) {
+        let startX = 0, startY = 0;
+        
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        // const ratio = option.ratio || window.devicePixelRatio;
+        const ratio = 1;
+        
+
+        /** 更新`canvas`尺寸 */
+        function updateSize() {
+            // canvas.width = option.el.clientWidth * ratio;
+            // canvas.height = option.el.clientHeight * ratio;
+            canvas.width = 1000;
+            canvas.height = 1000;
+        }
+
+        /** 设置画布样式 */
+        function setStyle() {
+            canvas.style.width = "100%";
+            canvas.style.height = "100%";
+            context.lineCap = "round";
+            context.lineJoin = "round";
+            context.fillStyle = option.backgroundColor || "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // 这里不用变量存储起来是为了在外部可以动态修改指定值，内部实时使用最新的，类似响应式
+        const getLineWidth = () => option.lineSize || 4;
+        const getLineColor = () => option.lineColor || "#000000";
+
+        /**
+         * 绘画开始
+         * @param {{ x: number, y: number }} size 坐标点
+         */
+	
+        function drawStart(size) {
+            const x = size.x * ratio, y = size.y * ratio;
+            context.beginPath();
+            context.moveTo(x, y);
+            context.lineTo(x, y);
+            context.strokeStyle = getLineColor();
+            context.lineWidth = getLineWidth() * ratio;
+            context.stroke();
+            context.closePath();
+            startY = y;
+            startX = x;
+        }
+            context.strokeStyle = getLineColor();
+            context.lineWidth = getLineWidth() * ratio;
+        /**
+         * 绘画拖拽
+         * @param {{ x: number, y: number }} size 坐标点
+         */
+        function drawMove(size) {
+            const x = size.x * ratio, y = size.y * ratio;
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(x, y);
+            context.strokeStyle = getLineColor();
+            context.lineWidth = getLineWidth() * ratio;
+            context.stroke();
+            context.closePath();
+            startY = y;
+            startX = x;
+        }
+
+        /**
+         * 绘画结束
+         * @param {{ x: number, y: number }} size 坐标点
+         */
+        function drawEnd(size) {
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(size.x * ratio, size.y * ratio);
+            context.stroke();
+            context.closePath();
+        }
+
+        /** 是否有绘画过 */
+        let hasDraw = false;
+        /** 是否正在绘画中 */
+        let isDrawing = false;
+
+        /**
+         * 鼠标摁下
+         * @param {MouseEvent} e 
+         */
+        function onMouseDown(e) {
+            e.preventDefault();
+            isDrawing = true;
+            hasDraw = true;
+            drawStart({
+                x: e.offsetX,
+                y: e.offsetY
+            })
+        }
+
+        /**
+         * 鼠标移动
+         * @param {MouseEvent} e 
+         */
+        function onMouseMove(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            drawMove({
+                x: e.offsetX,
+                y: e.offsetY
+            })
+        }
+
+        /**
+         * 鼠标抬起
+         * @param {MouseEvent} e
+         */
+        function onMouseUp(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            drawEnd({
+                x: e.offsetX,
+                y: e.offsetY
+            })
+            isDrawing = false;
+        }
+
+        /**
+         * 触摸开始
+         * @param {TouchEvent} e 
+         */
+        function onTouchStart(e) {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                isDrawing = true;
+                hasDraw = true;
+                const size = e.touches[0];
+                const box = canvas.getBoundingClientRect();
+                drawStart({
+                    x: size.clientX - box.left,
+                    y: size.clientY - box.top
+                })
+            }
+        }
+
+        /**
+         * 触摸移动
+         * @param {TouchEvent} e
+         */
+        function onTouchMove(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            if (e.touches.length === 1) {
+                const size = e.touches[0];
+                const box = canvas.getBoundingClientRect();
+                drawMove({
+                    x: size.clientX - box.left,
+                    y: size.clientY - box.top
+                })
+            }
+        }
+
+        /**
+         * 触摸结束
+         * @param {TouchEvent} e
+         */
+        function onTouchEnd(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            if (e.touches.length === 1) {
+                const size = e.touches[0];
+                const box = canvas.getBoundingClientRect();
+                drawEnd({
+                    x: size.clientX - box.left,
+                    y: size.clientY - box.top
+                })
+            }
+        }
+
+        /** 整个文档抬起事件 */
+        function documentUp() {
+            isDrawing = false;
+            // 如果节点被销毁了，那就取消`document`的绑定事件
+            if (!document.body.contains(canvas)) {
+                document.removeEventListener("mouseup", documentUp);
+                document.removeEventListener("touchend", documentUp);
+            }
+        }
+        // 输出节点
+        document.body.appendChild(canvas);
+       
+        // 先更新一次
+        updateSize();
+        setStyle();
+        // 添加事件
+        canvas.addEventListener("mousedown", onMouseDown);
+        canvas.addEventListener("mousemove", onMouseMove);
+        canvas.addEventListener("mouseup", onMouseUp);
+        canvas.addEventListener("touchstart", onTouchStart);
+        canvas.addEventListener("touchmove", onTouchMove);
+        canvas.addEventListener("touchend", onTouchEnd);
+        document.addEventListener("mouseup", documentUp);
+        document.addEventListener("touchend", documentUp);
+
+        return {
+            canvas,
+            /** 重置签名版 */
+            reset() {
+                hasDraw = false;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                setStyle();
+            },
+            /**
+             * 生成图片
+             * @param imageType 图片类型
+             * @returns 
+             */
+            getBase64(imageType = "image/jpeg") {
+                return hasDraw ? canvas.toDataURL(imageType) : "";
+            }
+        }
+    }
+
+
+/**
+ * `base64`转`file`或者`blob`对象
+ * @param {string} base64
+ * @param {"blob"|"file"} type 转换的类型，默认`"blob"`
+ * @param {string} filename 转换后的文件名，`type: "file"`时生效
+ */
+ function base64ToBlobOrFile(base64, type, filename) {
+  const arr = base64.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const suffix = mime.split("/")[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  if (type === "file") {
+    return new File([u8arr], `${filename}.${suffix}`, { type: mime });
+  } else {
+    return new Blob([u8arr], { type: mime });
+  }
+}
+
+</script>
+
+</html>
+
+
+<!-- ==============================================================-------------------------==================
+==============================================================-------------------------==================
+==============================================================-------------------------==================
+==============================================================-------------------------================== -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>canvas-sign</title>
+	<style>
+		html,
+		body {
+			margin: 0;
+		}
+
+		.container {
+			width: calc(100vw - 40px);
+			height: calc(100vh - 40px);
+			padding: 20px;
+		}
+
+		.canvas-body {
+			width: calc(80vw);
+			height: calc(80vh);
+			margin: 20px auto;
+		}
+
+		#sign {
+			background-color: #f3f5f7;
+			border-radius: 4px;
+			border: 1px dashed #0F6BFF;
+		}
+
+		#img {
+			margin: 20px;
+			border-radius: 4px;
+			background-color: #f3f5f7;
+			display: none;
+		}
+
+		#img.show {
+			display: inline-block;
+		}
+
+		.btns {
+			width: calc(80vw - 40px);
+			text-align: right;
+			margin: 0 auto;
+		}
+
+		@media screen and (orientation: portrait) {
+			.qrcode {
+				display: none;
+			}
+		}
+	</style>
+	<script type="text/javascript" src="https://static.runoob.com/assets/qrcode/qrcode.min.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div id="canvas-body" class="canvas-body">
+			<canvas id="sign" style="width: 100%; height: 100%;"></canvas>
+			<div class="qrcode">
+				扫码签名
+				<div id="qrcode"></div>
+			</div>
+		</div>
+		<div class="btns">
+			<button id="reset">重置</button>
+			<button id="showImg">生成图片</button>
+		</div>
+	</div>
+	<div id="img">
+
+	</div>
+	<script>
+		let canvasBody = document.getElementById('canvas-body');
+		let canvas = document.getElementById('sign');
+		let reset = document.getElementById('reset');
+		let showImg = document.getElementById('showImg');
+		let img = document.getElementById('img');
+		canvas.width = canvasBody.clientWidth;
+		canvas.height = canvasBody.clientHeight;
+		let ctx = canvas.getContext('2d');
+		ctx.lineWidth = 10;
+		ctx.strokeStyle = '#333';
+		ctx.lineCap = 'round';
+		ctx.lineJoin = 'round';
+		let isDrawing = false;
+		let dataURL = '';
+		let initX;
+		let initY;
+		// 事件监听
+		canvas.addEventListener('mousedown', (e) => {
+			isDrawing = true;
+			initX = e.offsetX;
+			initY = e.offsetY
+		});
+		canvas.addEventListener('mousemove', draw);
+		canvas.addEventListener('mouseup', () => isDrawing = false);
+		canvas.addEventListener('mouseout', () => isDrawing = false);
+
+		// 绘制
+		function draw(e) {
+			if (!isDrawing) return
+			ctx.beginPath();
+			// 起点
+			ctx.moveTo(initX, initY);
+			// 终点
+			ctx.lineTo(e.offsetX, e.offsetY);
+			ctx.stroke();
+			initX = e.offsetX;
+			initY = e.offsetY
+		}
+
+		function clear() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			if (dataURL) {
+				dataURL = '';
+				img.innerHTML = '';
+				img.classList.remove('show');
+			}
+		}
+
+		function canvasToBase64() {
+			dataURL = canvas.toDataURL();
+			// let oGrayImg = new Image();
+			// oGrayImg.src = dataURL;
+			// img.classList.add('show');
+			// img.appendChild(oGrayImg)
+			alert(`${dataURL}`)
+		}
+
+		reset.addEventListener('click', clear);
+		showImg.addEventListener('click', canvasToBase64);
+	</script>
+	<script>
+		let qrcode = new QRCode(document.getElementById('qrcode'), {
+			width: 96,
+			height: 96
+		})
+
+		qrcode.makeCode('https://canvas-sign.vercel.app/');
+
+	</script>
+</body>
+
+</html> -->

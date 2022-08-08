@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+ 	body,
+    html {
+      width: 100%;
+      height: 100%;
+      background: #2b3a42;
+      display: flex;
+    }
+    .demo-cube {
+      position: relative;
+      width: 100%;
+      height: 200px;
+    }
+    .cube {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -50px 0 0 -50px;
+      transform-style: preserve-3d;
+      transform-origin: 50px 50px;
+      transform: rotateX(-33.5deg) rotateY(45deg);
+      animation: slowspin 6s linear infinite 2s;
+    }
+    .cube div {
+      position: absolute;
+      display: block;
+      width: 100px;
+      height: 100px;
+      background: rgba(141, 214, 249, 0.5);
+      border: 1px solid #fff;
+    }
+    .cube .top {
+      transform: rotateX(90deg) translateZ(50px);
+    }
+    .cube .bottom {
+      transform: rotateX(-90deg) translateZ(50px);
+    }
+    .cube .left {
+      transform: rotateY(-90deg) translateZ(50px);
+    }
+    .cube .right {
+      transform: rotateY(90deg) translateZ(50px);
+    }
+    .cube .front {
+      transform: translateZ(50px);
+    }
+    .cube .back {
+      transform: translateZ(-50px);
+    }
+    @keyframes slowspin {
+       0%   {left:100px; top:100px;transform: rotateX(-33.5deg) rotateY(45deg);}
+      25%  {left:300px; top:100px;transform: rotateX(-33.5deg) rotateY(180deg);}
+      50%  {left:300px; top:300px;transform: rotateX(-123.5deg) rotateY(135deg);}
+      75%  {left:100px; top:300px;transform: rotateX(33.5deg) rotateY(315deg);}
+      100% {left:100px; top:100px;transform: rotateX(-33.5deg) rotateY(45deg);}
+    }
+</style>
+</head>
+<body>
+  <div class="demo-cube">
+    <div class="cube">
+      <div class="top"></div>
+      <div class="bottom"></div>
+      <div class="front"></div>
+      <div class="back"></div>
+      <div class="right"></div>
+      <div class="left"></div>
+    </div>
+  </div>
+</body>
+</html>

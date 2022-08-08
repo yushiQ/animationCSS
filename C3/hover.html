@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p {
+            position: relative;
+            font-family: monospace;
+            width: 26ch;
+            height: 25px;
+            animation: typing 3s steps(15, end);
+            animation-fill-mode: both;
+            animation-play-state: paused;
+            overflow: hidden;
+            font-size: 20px;
+        }
+
+        p:hover {
+            animation-play-state: running;
+        }
+
+        p::before {
+            position: absolute;
+            content: "";
+            width: 4px;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            animation: blink .8s linear infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                border-right: 4px solid transparent;
+            }
+
+            50%,
+            100% {
+                border-right: 4px solid #000;
+            }
+        }
+
+        @keyframes typing {
+            from {
+                width: 11ch;
+            }
+
+            to {
+                width: 26ch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <p>Hover Me - You are a pig!</p>
+</body>
+
+</html>

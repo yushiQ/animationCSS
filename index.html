@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #myCanvas {
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function clearCanvas() {
+            context.fillStyle = '#000000';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        window.addEventListener('resize', resizeCanvas, false);
+        resizeCanvas();
+
+        function mouseDownHandler(e) {
+            var x = e.clientX;
+            var y = e.clientY;
+            fire(x, y) // 动画展示
+            // drawFireworks(x, y); // 无动画显示只显示模型
+        }
+
+        // // 无动画显示一个模型
+        // function drawFireworks(sx, sy) {
+        //     var count = 10; //烟花粒子数量
+        //     var radius = 10; //烟花环绕半径
+
+        //     for (var i = 0; i < count; i++) {
+        //         var angle = 360 / count * i; //烟花粒子角度
+        //         var radians = angle * Math.PI / 180; //烟花粒子弧度
+
+        //         var vx = sx + Math.cos(radians) * radius;
+        //         var vy = sy + Math.sin(radians) * radius;
+
+        //         var size = 2;
+        //         context.beginPath();
+        //         context.arc(vx, vy, size, 0, Math.PI * 2, false)
+        //         context.closePath();
+        //         context.fillStyle = "#ff0000";
+        //         context.fill();
+        //     }
+
+        // }
+
+        //动态绘制
+
+        // var radius = 0;
+
+        // function fire(x, y) {
+        //     function tick() {
+        //         drawFireworks(x, y);
+        //         radius++;
+        //         requestAnimationFrame(tick);
+        //     }
+        //     tick();
+        // }
+
+        var rid;
+
+        function fire(x, y) {
+            createFireworks(x, y);
+
+            // 第一层  （字体显示不烟花特效）
+            // function tick() {
+            //     drawFireworks();
+            //     rid = requestAnimationFrame(tick);
+            // }
+
+            // 第二层 带拖尾
+            function tick() {
+                //tips:注意新加入的这4行代码
+                context.globalCompositeOperation = 'destination-out';
+                context.fillStyle = 'rgba(0,0,0,' + 10 / 100 + ')';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.globalCompositeOperation = 'lighter';
+
+                //tipsend
+                drawFireworks();
+                rid = requestAnimationFrame(tick);
+            }
+
+            cancelAnimationFrame(rid);
+            tick();
+
+        }
+
+
+
+        var particles = [];
+
+        //    {  // 无重力
+        //        function createFireworks(sx, sy) {
+        //         particles = [];
+
+        //         var hue = Math.floor(Math.random() * 51) + 150;
+        //         var hueVariance = 30;
+        //         var count = 100;
+
+        //         for (var i = 0; i < count; i++) {
+        //             var p = {};
+
+        //             var angle = Math.floor(Math.random() * 360);
+        //             p.radians = angle * Math.PI / 180;
+        //             p.radius = 0;
+
+        //             p.sx = sx;
+        //             p.sy = sy;
+
+        //             p.speed = (Math.random() * 5) + .4;
+
+        //             p.size = Math.floor(Math.random() * 3) + 1;
+
+        //             p.hue = Math.floor(Math.random() * ((hue + hueVariance) - (hue - hueVariance))) + (hue - hueVariance);
+        //             p.brightness = Math.floor(Math.random() * 31) + 50;
+        //             p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+
+        //             particles.push(p);
+        //         }
+        //     }
+
+        // function drawFireworks() {
+        //     clearCanvas();
+        //     for (var i = 0; i < particles.length; i++) {
+        //         var p = particles[i];
+        //         p.vx = p.sx + Math.cos(p.radians) * p.radius;
+        //         p.vy = p.sy + Math.sin(p.radians) * p.radius;
+        //         p.radius += 1 + p.speed;
+        //         context.beginPath();
+        //         context.arc(p.vx, p.vy, p.size, 0, Math.PI * 2, false);
+        //         context.closePath();
+        //         context.fillStyle = 'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + 100 + ')';
+        //         context.fill();
+        //     }
+        // }
+        // }
+
+        // { // 有重力
+        //     function createFireworks(sx, sy) {
+        //         particles = [];
+        //         var hue = Math.floor(Math.random() * 51) + 150;
+        //         var hueVariance = 30;
+        //         var count = 100;
+        //         for (var i = 0; i < count; i++) {
+        //             var p = {};
+        //             var angle = Math.floor(Math.random() * 360);
+        //             p.radians = angle * Math.PI / 180;
+        //             p.x = sx;
+        //             p.y = sy;
+        //             p.speed = (Math.random() * 5) + .4;
+        //             p.radius = p.speed;
+        //             p.size = Math.floor(Math.random() * 3) + 1;
+        //             p.hue = Math.floor(Math.random() * ((hue + hueVariance) - (hue - hueVariance))) + (hue -
+        //                 hueVariance);
+        //             p.brightness = Math.floor(Math.random() * 31) + 50;
+        //             p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+        //             particles.push(p);
+        //         }
+        //     }
+
+        //     function drawFireworks() {
+        //         clearCanvas();
+        //         for (var i = 0; i < particles.length; i++) {
+        //             var p = particles[i];
+        //             var vx = Math.cos(p.radians) * p.radius;
+        //             var vy = Math.sin(p.radians) * p.radius + 0.4;
+        //             p.x += vx;
+        //             p.y += vy;
+        //             p.radius *= 1 - p.speed / 100;
+        //             p.alpha -= 0.005;
+        //             context.beginPath();
+        //             context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+        //             context.closePath();
+        //             context.fillStyle = 'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + p.alpha + ')';
+        //             context.fill();
+        //         }
+        //     }
+        // }
+
+        { // 字体烟花 text = "太帅"
+            function createFireworks(sx, sy) {
+                // 重新创建一个文字的画布 canvas 标签
+                var textCanvas = document.createElement("canvas");
+                textCanvas.width = 1000;
+                textCanvas.height = 500;
+                var textctx = textCanvas.getContext("2d");
+                textctx.fillStyle = "#000000";
+                textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+
+                let text = ["喜欢", "不喜欢", "都行"][Math.floor(Math.random() * 3)];
+                var fontSize = 120;
+                var textHeight = fontSize;
+                textctx.font = fontSize + "px Verdana";
+
+                textctx.fillStyle = "#ffffff";
+                // context.fillText(text, sx, sy + textHeight);
+                textctx.fillText(text, 0, textHeight); // 渲染前坐标放到00的位置
+                var textWidth = textctx.measureText(text).width;
+
+                var hue = Math.random() * 360;
+                var hueVariance = 30;
+                // 获取点阵信息
+                // var imageData = context.getImageData(sx, sy, textWidth, textHeight); 
+                var imageData = textctx.getImageData(0, 0, textWidth, textHeight); // 渲染前坐标放到00的位置
+
+                textctx.fillRect(0, 0, textCanvas.width, textCanvas.height)
+                // [r,g,b,a,r,g,b,a] 点阵数据的格式 
+                // 相当于300 ✖️ 400 = 120000 * 4  总个数
+                var gap = 2; // 密度
+                for (var h = 0; h < textHeight; h += gap) {
+                    for (var w = 0; w < textWidth; w += gap) {
+                        var position = (textWidth * h + w) * 4;
+                        var r = imageData.data[position], g = imageData.data[position + 1], b = imageData.data[position + 2];
+
+                        if (r + g + b == 0) continue;
+
+                        // context.fillRect(w, h + textHeight, 1, 1);// 不需要绘制信息
+
+                        var p = {};
+
+                        p.x = sx;
+                        p.y = sy;
+
+                        p.fx = sx + w - textWidth / 2;
+                        p.fy = sy + h - textHeight / 2;
+
+                        p.size = Math.floor(Math.random() * 2) + 1;
+                        p.speed = 1;
+
+                        p.hue = Math.floor(Math.random() * ((hue + hueVariance) - (hue - hueVariance))) + (hue - hueVariance);
+                        p.brightness = Math.floor(Math.random() * 31) + 50;
+                        p.alpha = (Math.floor(Math.random() * 60) + 40) / 100;
+
+                        particles.push(p)
+                    }
+                }
+            }
+            function drawFireworks() {
+                clearCanvas();
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += (p.fx - p.x) / 10;
+                    p.y += (p.fy - p.y) / 10 - (p.alpha - 1) * p.speed;;
+                    p.radius *= 1 - p.speed / 100;
+                    p.alpha -= 0.005;
+                    if (p.alpha <= 0) {
+                        particles.splice(i, 1);
+                        continue;
+                    }
+                    context.beginPath();
+                    context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+                    context.closePath();
+                    context.fillStyle = 'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + p.alpha + ')';
+                    context.fill();
+                }
+            }
+            // function drawFireworks() {
+            //     clearCanvas();
+            //     for (var i = 0; i < particles.length; i++) {
+            //         var p = particles[i];
+            //         p.x += (p.fx - p.x) / 10;
+            //         p.y += (p.fy - p.y) / 10 - (p.alpha - 1) * p.speed;
+
+            //         p.alpha -= 0.006;
+
+            //         if (p.alpha <= 0) {
+            //             particles.splice(i, 1);
+            //             continue;
+            //         }
+            //         context.beginPath();
+            //         context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+
+            //         context.closePath();
+            //         context.fillStyle = 'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + p.alpha + ')';
+            //         context.fill();
+            //     }
+            // }
+
+        }
+
+        document.addEventListener('mousedown', mouseDownHandler, false);
+    </script>
+    <!-- <script>
+        (function () {
+            var cdom = document.createElement("canvas");
+            cdom.id = "myCanvas";
+            cdom.style.position = "fixed";
+            cdom.style.left = "0";
+            cdom.style.top = "0";
+            cdom.style.zIndex = -1;
+            document.body.appendChild(cdom);
+            var canvas = document.getElementById('myCanvas');
+            var context = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas, false);
+            resizeCanvas();
+            clearCanvas();
+
+            function clearCanvas() {
+                context.fillStyle = '#000000';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function mouseDownHandler(e) {
+                var x = e.clientX;
+                var y = e.clientY;
+                fire(x, y);
+            }
+            var rid;
+
+            function fire(x, y) {
+                createFireworks(x, y);
+
+                function tick() {
+                    context.globalCompositeOperation = 'destination-out';
+                    context.fillStyle = 'rgba(0,0,0,' + 10 / 100 + ')';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    context.globalCompositeOperation = 'lighter';
+                    drawFireworks();
+                    rid = requestAnimationFrame(tick);
+                }
+                cancelAnimationFrame(rid);
+                tick();
+            }
+            var particles = [];
+
+            function createFireworks(sx, sy) {
+                particles = [];
+                var hue = Math.floor(Math.random() * 51) + 150;
+                var hueVariance = 30;
+                var count = 100;
+                for (var i = 0; i < count; i++) {
+                    var p = {};
+                    var angle = Math.floor(Math.random() * 360);
+                    p.radians = angle * Math.PI / 180;
+                    p.x = sx;
+                    p.y = sy;
+                    p.speed = (Math.random() * 5) + .4;
+                    p.radius = p.speed;
+                    p.size = Math.floor(Math.random() * 3) + 1;
+                    p.hue = Math.floor(Math.random() * ((hue + hueVariance) - (hue - hueVariance))) + (hue -
+                        hueVariance);
+                    p.brightness = Math.floor(Math.random() * 31) + 50;
+                    p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+                    particles.push(p);
+                }
+            }
+
+            function drawFireworks() {
+                clearCanvas();
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    var vx = Math.cos(p.radians) * p.radius;
+                    var vy = Math.sin(p.radians) * p.radius + 0.4;
+                    p.x += vx;
+                    p.y += vy;
+                    p.radius *= 1 - p.speed / 100;
+                    p.alpha -= 0.005;
+                    context.beginPath();
+                    context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+                    context.closePath();
+                    context.fillStyle = 'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + p.alpha + ')';
+                    context.fill();
+                }
+            }
+            document.addEventListener('mousedown', mouseDownHandler, false);
+        })();
+    </script> -->
+
+</body>
+
+</html>
