@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+         background-color: #000; 
+        }
+        .contains {
+            width: 600px;
+            height: 500px;
+            margin: 50px auto;
+            background: url(./img.jpg) no-repeat center;
+            position: relative;
+            border: 1px solid #000;
+            /* 设置变量 */
+            --sx: 20px;
+            --sy: 20px;
+        }
+        .contains::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            filter: blur(10px);
+            left: var(--sx);
+            top: var(--sy);
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                #fff007,
+                #fff008,
+                #fff009,
+                #fff109,
+                #fff199,
+                #eee697,
+                #eee699,
+                #eee099,
+                #ee0099,
+                #ee1099,
+                #ee1199,
+                #ee2199,
+                #ee2000,
+                #e2e2e2,
+                #ee2199,
+                #ee2109
+            );
+            
+            /* 裁剪 */
+            clip-path: polygon(
+                -100vmax -100vmax,
+                100vmax -100vmax, 
+                100vmax 100vmax, 
+               -100vmax 100vmax,
+               -100vmax -100vmax,
+               /* 非计算逻辑 */
+               /* 0 0,
+               0 100%,
+               100% 100%,
+               100% 0,
+               0 0 */
+               calc(0px - var(--sx)) calc(0px - var(--sy)),
+               calc(0px - var(--sx)) calc(100% - var(--sy)),
+               calc(100% - var(--sx)) calc(100% - var(--sy)),
+               calc(100% - var(--sx)) calc(0px - var(--sy)),
+               calc(0px - var(--sx)) calc(0px - var(--sy))
+           );
+  
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+      <div class="contains"></div>
+    </div>
+</body>
+</html>

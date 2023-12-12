@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: black;
+        }
+        .container {
+            margin-top: 50px;
+            text-align: center;
+            background-color: black;
+
+            /* 滤镜 对比度 contrast()*/
+            filter: contrast(30)
+        }
+        .text {
+            font-size: 100px;
+            color: #fff;
+            /* 字母间距 */
+            /* letter-spacing: -50px;  */
+
+            /* 把物体动画地从一个地方移动到另一个地方，并让它停留在那里：animation-fill-mode: forwards;*/
+            animation: showup 3s forwards;
+            
+            /* 滤镜 模糊程度 blur()*/
+            /* filter: blur(1px); */
+        }
+        @keyframes showup{
+          from {
+            letter-spacing: -50px;
+            filter: blur(10px);
+          }
+          to {
+            letter-spacing: 10px;
+            filter: blur(2px);
+          }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="text">Duyi Education</span>
+    </div>
+</body>
+</html>
