@@ -1,0 +1,19 @@
+body {
+  background-color: #000;
+}
+
+.container {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  outline: none;
+  margin: 0 auto;
+}
+
+.inner img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+/*# sourceMappingURL=test.css.map */
