@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .taiji {
+      width: 200px;
+      height: 200px;
+      border: 2px solid black;
+      background-image: linear-gradient(to right, #ffffff 0%, #ffffff 50%, #000000 50%);
+      border-radius: 50%;
+      position: relative;
+
+      &::before {
+        content: ' ';
+        display: block;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        left: 50px;
+        top: 0;
+        background: #000000;
+        border-radius: 50%;
+        box-shadow: 0 100px 0 0 #ffffff;
+      }
+
+      &::after {
+        content: ' ';
+        display: block;
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        left: 85px;
+        bottom: 35px;
+        background: #000000;
+        border-radius: 50%;
+        box-shadow: 0 -100px 0 0 #ffffff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+   <div class="taiji"></div>
+</body>
+
+</html>
